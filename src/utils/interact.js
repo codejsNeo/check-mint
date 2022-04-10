@@ -1,6 +1,7 @@
 const eth = require("ethers");
 const contractABI = require('../contract-abi.json');
-const contractAddress = "0x68C8d542D0Fd539F1Cc02f64b6F769e0310C3B10";
+// const contractAddress = "0x68C8d542D0Fd539F1Cc02f64b6F769e0310C3B10";
+const contractAddress = process.env.REACT_APP_CONTRACT_ADDRESS;
 const provider = new eth.providers.Web3Provider(window.ethereum);
 // const web3 = new eth.providers.AlchemyProvider('rinkeby',"https://eth-rinkeby.alchemyapi.io/v2/NzGGAKznXws9s9xfhx8qFOGEcJRuXVNv");
 const signer =  provider.getSigner(); 
@@ -34,10 +35,10 @@ export const mintNFT = async (url, name, description) => {
   //sign the transaction via Metamask
   try {
     const response = await contract.safeMint(window.ethereum.selectedAddress);  
-    console.log(response);
+    
     return {
       success: true,
-      status: "✅ Check out your transaction on Etherscan: https://rinkeby.etherscan.io/tx/" 
+      status: "✅ Check out your transaction on Etherscan: https://rinkeby.etherscan.io/tx/" + response.hash
     }
   } catch (error) {
     return {
