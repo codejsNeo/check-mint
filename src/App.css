@@ -1,5 +1,7 @@
 .App {
   text-align: center;
+  background-color: aqua;
+  
 }
 
 .App-logo {
@@ -26,6 +28,30 @@
 
 .App-link {
   color: #61dafb;
+}
+
+.Mint{
+  
+  background-color: aqua;
+  height: fit-content;
+}
+
+.spn{
+  margin: 8px;
+  color: blueviolet;
+}
+
+.mpns{
+  border:groove;
+  padding: 5px;
+  margin: 7px;
+}
+
+.btn{
+  margin-top: 20px;
+  background-color: whitesmoke;
+  padding: 4px;
+  margin-bottom: 20px;
 }
 
 @keyframes App-logo-spin {

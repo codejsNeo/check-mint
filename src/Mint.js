@@ -1,17 +1,21 @@
+import { ethers } from 'ethers';
 import React from 'react';
 import { useEffect, useState } from 'react';
-// import { connectWallet, getCurrentWalletConnected } from "./utils/interact.js";
 import { connectWallet, getCurrentWalletConnected, mintNFT } from "./utils/interact.js";
-
+const contractABI = require('./contract-abi.json');
 
 const Mint = () => {
   const [walletAddress, setWallet] = useState("");
   const [status, setStatus] = useState("");
-
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [url, setURL] = useState("");
-
+  const [items, setItems] = useState([])
+  const [balanceInfo, setBalanceInfo] = useState({
+    address: "",
+    balance: ""
+  });
+  const [ownerBalance, setOwnerBalance] = useState("");
+  const provider = new ethers.providers.Web3Provider(window.ethereum);
+  
+  
   function addWalletListener() {
     if (window.ethereum) {
       window.ethereum.on("accountsChanged", (accounts) => {
@@ -43,6 +47,15 @@ const Mint = () => {
     setStatus(status);
 
     addWalletListener();
+    const contract = new ethers.Contract(contractAddress, contractABI, provider);
+    const signer = provider.getSigner();
+    const signerAddress = await signer.getAddress();
+    const balance = await contract.balanceOf(signerAddress);
+    // for loop
+    setBalanceInfo({
+      address: signerAddress,
+      balance: String(balance)
+    });
   }, []);
 
   const connectWalletPressed = async () => {
@@ -52,13 +65,65 @@ const Mint = () => {
   };
 
   const onMintPressed = async () => {
-    const { status } = await mintNFT(url, name, description);
+    const { status } = await mintNFT();
     setStatus(status);
   };
 
+  const contractAddress = "0xBe09884e16a70A58E08F4a1D607c4E0cBA0c08dc";
+
+
+  const displayToken = async () => {
+    const nfts = [];
+    const contract = new ethers.Contract(contractAddress, contractABI, provider);
+    const signer = provider.getSigner();
+    const signerAddress = await signer.getAddress();
+    const balance = await contract.balanceOf(signerAddress);
+
+    for (let i = 0; i < balance; i++) {
+      nfts.push({
+        tokenIndex: i,
+        loading: true,
+        token: ''
+      });
+    }
+    setItems(nfts);
+
+    for (let nft of nfts) {
+      const token = await contract.tokenOfOwnerByIndex(
+        signerAddress,
+        nft.tokenIndex
+      );
+      console.log("token", token)
+      nfts[nft.tokenIndex] = {
+        tokenIndex: nft.tokenIndex,
+        loading: false,
+        token,
+
+      };
+      // console.log("nft",nfts)
+      setItems([...nfts]);
+    }
+  };
+
+  const getOwnerBalance = async () => {
+    const ownerBalance = await provider.getBalance(contractAddress);
+    const ownerBalance_Wei = parseInt(ownerBalance);
+    const ownerBalanceEther = ethers.utils.formatEther(ownerBalance_Wei);
+
+    setOwnerBalance(ownerBalanceEther)
+  };
+
+  const withdrawMoney = async () => {
+    const signer = provider.getSigner();
+    const contract = new ethers.Contract(contractAddress, contractABI, signer);
+    const withdraw = await contract.withdraw();
+  }
+
+
+
   return (
     <div className='Mint'>
-      <button id='walletButton' onClick={connectWalletPressed}>
+      <button id='walletButton' className='btn' onClick={connectWalletPressed}>
         {walletAddress.length > 0 ? (
           'Connected: ' +
           String(walletAddress).substring(0, 6) +
@@ -71,33 +136,53 @@ const Mint = () => {
       </button>
 
       <h1 id='title'>Custom Minter</h1>
-      <form id='form1'>
-        <h2>Asset link: </h2>
-        <input
-          type='text'
-          placeholder='e.g. https://gateway.pinata.cloud/ipfs/<hash>'
-          onChange={(e) => setURL(e.target.value)}
-        />
 
-        <h2>Token Name: </h2>
-        <input
-          type="text"
-          placeholder="name of your token"
-          onChange={(e) => setName(e.target.value)}
-        /> <br />
+      <div className='spn'>
+        My Balance:
+        <span > {balanceInfo.balance}</span>
+      </div>
 
-        <h2>Token description: </h2>
-        <input
-          type='text'
-          placeholder='description of token'
-          onChange={(e => setDescription(e.target.value))}
-        />
+      <div align='center' className='spn'>
+      For Address: <span className='mpns'><b>{balanceInfo.address}</b></span>
 
-      </form>
+      </div>
 
-      <button id='mintButton' onClick={onMintPressed}>
+      <div className='spn'>
+        <button id='getOwnerBalance' className='btn' onClick={getOwnerBalance} type="submit">
+          Owner/Contract Balance
+        </button>
+        <span> {ownerBalance} ETH</span>
+      </div>
+
+      <div className='spn'>
+        <button id='withdrawMoney' className='btn' onClick={withdrawMoney} type="submit">
+          Withdraw Eth
+        </button>
+        <span>  ETH</span>
+      </div>
+
+      <div className='spn'>
+        <button id='displayTokens' className='btn' onClick={displayToken} type="submit">
+          See All Tokens
+        </button>
+        <span>
+          {
+            items.map((item, i) => (
+              <div key={i}>
+                <span>TokenId: {item.tokenIndex}</span> |
+                <span> Token: {item.token._hex}</span>
+              </div>
+            ))
+          }
+
+        </span>
+      </div>
+
+      <br /><br />
+      <button id='mintButton' className='btn' onClick={onMintPressed}>
         Mint NFT
       </button>
+
       <p id="status">
         {status}
       </p>
