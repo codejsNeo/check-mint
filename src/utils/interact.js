@@ -1,6 +1,6 @@
 const eth = require("ethers");
 const contractABI = require('../contract-abi.json');
-const contractAddress = "0xBe09884e16a70A58E08F4a1D607c4E0cBA0c08dc";
+const contractAddress = process.env.REACT_APP_CONTRACT_ADDRESS;
 const provider = new eth.providers.Web3Provider(window.ethereum);
 const signer = provider.getSigner();
 const contract = new eth.Contract(contractAddress, contractABI, signer);

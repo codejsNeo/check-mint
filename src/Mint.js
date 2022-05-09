@@ -14,8 +14,8 @@ const Mint = () => {
   });
   const [ownerBalance, setOwnerBalance] = useState("");
   const provider = new ethers.providers.Web3Provider(window.ethereum);
-  
-  
+
+
   function addWalletListener() {
     if (window.ethereum) {
       window.ethereum.on("accountsChanged", (accounts) => {
@@ -69,8 +69,7 @@ const Mint = () => {
     setStatus(status);
   };
 
-  const contractAddress = "0xBe09884e16a70A58E08F4a1D607c4E0cBA0c08dc";
-
+  const contractAddress = process.env.REACT_APP_CONTRACT_ADDRESS;
 
   const displayToken = async () => {
     const nfts = [];
@@ -143,7 +142,7 @@ const Mint = () => {
       </div>
 
       <div align='center' className='spn'>
-      For Address: <span className='mpns'><b>{balanceInfo.address}</b></span>
+        For Address: <span className='mpns'><b>{balanceInfo.address}</b></span>
 
       </div>
 
