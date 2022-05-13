@@ -4,6 +4,7 @@
   
 }
 
+
 .App-logo {
   height: 40vmin;
   pointer-events: none;
@@ -28,6 +29,38 @@
 
 .App-link {
   color: #61dafb;
+}
+
+.ntw{
+  text-align: left;
+  padding: 8px;
+  font-weight: bold;
+  margin-right: 4px;
+  background-color: orangered;
+}
+
+#walletButton{
+  padding: 8px;
+}
+
+.disp{
+  background-color: whitesmoke;
+}
+
+.networks{
+  margin: 5px;
+  border-radius: 8px;
+  padding: 8px;
+  background-color: #008CBA;
+  color: white;
+  transition-duration: 0.4s;
+  cursor: pointer;
+}
+
+.networks:hover{
+  
+  background-color: white;
+  color:blue;
 }
 
 .Mint{

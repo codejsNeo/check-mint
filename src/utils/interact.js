@@ -5,11 +5,9 @@ const provider = new eth.providers.Web3Provider(window.ethereum);
 const signer = provider.getSigner();
 const contract = new eth.Contract(contractAddress, contractABI, signer);
 
-
 export const mintNFT = async () => {
   //sign the transaction via Metamask
   try {
-
     const response = await contract.safeMint(window.ethereum.selectedAddress, { value: eth.utils.parseEther("0.001") });
 
     return {
@@ -68,6 +66,7 @@ export const getCurrentWalletConnected = async () => {
         method: "eth_accounts",
       });
       if (addressArray.length > 0) {
+
         return {
           address: addressArray[0],
           status: "",
@@ -102,3 +101,4 @@ export const getCurrentWalletConnected = async () => {
     };
   }
 };
+
