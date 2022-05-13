@@ -29,6 +29,7 @@ export const connectWallet = async () => {
       const addressArray = await window.ethereum.request({
         method: "eth_requestAccounts",
       });
+
       const obj = {
         status: "Message here",
         address: addressArray[0],
